@@ -7,6 +7,9 @@ import CartPage from './pages/CartPage';
 import ContactPage from './pages/ContactPage';
 import { CartProvider } from './context/CartContext';
 
+import ProductDetail from "./pages/ProductDetail";
+
+
 function App() {
   return (
     <CartProvider>
@@ -17,6 +20,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/product/:id" element={<ProductDetail />} /> {/* ruta dinámica */}
+
         </Routes>
       </BrowserRouter>
     </CartProvider>

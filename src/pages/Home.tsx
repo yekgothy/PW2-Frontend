@@ -6,26 +6,9 @@ import BrandCarousel from '../components/BrandCarousel';
 import Banner from '../components/Banner';
 import Footer from '../components/Footer';
 
-const phones = [
-  {
-    id: 1,
-    name: 'iPhone 14',
-    price: 18999,
-    image: 'iphone.jpg'
-  },
-  {
-    id: 2,
-    name: 'Samsung Galaxy S23',
-    price: 15999,
-    image: 'galaxy.jpg',
-  },
-  {
-    id: 3,
-    name: 'Xiaomi Redmi Note 12',
-    price: 6999,
-    image: 'xiaomi.jpg',
-  },
-];
+import { phones } from '../data'; // <-- importar
+
+
 
 const Home: React.FC = () => (
   <div className="min-h-screen">
