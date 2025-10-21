@@ -5,7 +5,7 @@ export const phones = [
     name: 'iPhone 14',
     price: 18999,
     image: '/iphone.jpg',
-    description: 'El iPhone 14 combina potencia y diseño de última generación.',
+    description: `El iPhone 14 cuenta con una pantalla Super Retina XDR de 6.1 pulgadas, chip A15 Bionic para un rendimiento fluido, sistema de cámara dual con modo noche y video en 4K. Su diseño elegante y resistencia al agua lo convierten en un smartphone confiable y moderno.`,
     features: ['Envío gratis', 'Garantía 1 año']
   },
   {
