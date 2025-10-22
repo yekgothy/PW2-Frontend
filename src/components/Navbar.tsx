@@ -177,7 +177,7 @@ const Navbar: React.FC = () => {
         {/* Sección Inferior: Enlaces de Navegación */}
         <div className="flex justify-center items-center space-x-10 py-4">
           <Link to="/" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Inicio</Link>
-          <a href="#" className="text-sm font-semibold text-gray-700 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Celulares</a>
+          <Link to="/catalog" className="text-sm font-semibold text-gray-700 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Celulares</Link>
           <a href="#" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Accesorios</a>
           <a href="#" className="text-sm font-semibold text-red-500 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Ofertas</a>
           <a href="#" className="text-sm font-semibold text-gray-700 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Servicios</a>

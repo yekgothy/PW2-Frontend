@@ -5,6 +5,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import StarIcon from '@mui/icons-material/Star';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'; // Icono mejorado
+import { Link } from 'react-router-dom';
+
 
 // --- Datos definidos fuera del componente para mantenibilidad ---
 const features = [
@@ -67,10 +69,12 @@ const HeroSection: React.FC = () => {
 
             {/* Botones de acción (Sin cambios, ya están muy bien) */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link to="/catalog">
               <button className="group bg-gradient-to-r from-red-500 to-[#B974F4] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-red-500/25 transform hover:scale-105 flex items-center justify-center space-x-2">
                 <span>Ver catálogo</span>
                 <ArrowForwardIcon className="group-hover:translate-x-1 transition-transform duration-300" />
               </button>
+              </Link>
               
               <button className="group border-2 border-white/20 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:bg-white/10 hover:border-white/40 flex items-center justify-center space-x-2">
                 <LocalOfferIcon />
