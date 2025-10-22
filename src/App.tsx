@@ -7,6 +7,7 @@ import CartPage from './pages/CartPage';
 import ContactPage from './pages/ContactPage';
 import { CartProvider } from './context/CartContext';
 import UserProfile from './pages/userProfile';
+import SearchResults from './pages/SearchResults';
 
 import ProductDetail from "./pages/ProductDetail";
 
@@ -22,9 +23,8 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/profile" element={<UserProfile />} />
-
-                  <Route path="/product/:id" element={<ProductDetail />} /> {/* ruta dinámica */}
-
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/product/:id" element={<ProductDetail />} /> {/* ruta dinámica */}
         </Routes>
       </BrowserRouter>
     </CartProvider>
