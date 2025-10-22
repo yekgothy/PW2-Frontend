@@ -179,7 +179,7 @@ const Navbar: React.FC = () => {
           <Link to="/" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Inicio</Link>
           <Link to="/catalog" className="text-sm font-semibold text-gray-700 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Celulares</Link>
           <a href="#" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Accesorios</a>
-          <a href="#" className="text-sm font-semibold text-red-500 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Ofertas</a>
+          <Link to="/offers" className="text-sm font-semibold text-red-500 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Ofertas</Link>
           <a href="#" className="text-sm font-semibold text-gray-700 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Servicios</a>
           <Link to="/contact" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Contacto</Link>
           <Link to="/profile" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Perfil</Link>
