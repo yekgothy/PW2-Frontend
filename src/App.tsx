@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import CartPage from './pages/CartPage';
 import ContactPage from './pages/ContactPage';
 import { CartProvider } from './context/CartContext';
+import UserProfile from './pages/userProfile';
 
 import ProductDetail from "./pages/ProductDetail";
 
@@ -20,6 +21,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/profile" element={<UserProfile />} />
+
                   <Route path="/product/:id" element={<ProductDetail />} /> {/* ruta dinámica */}
 
         </Routes>
