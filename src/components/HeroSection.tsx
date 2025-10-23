@@ -68,19 +68,25 @@ const HeroSection: React.FC = () => {
             </div>
 
             {/* Botones de acción (Sin cambios, ya están muy bien) */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link to="/catalog">
-              <button className="group bg-gradient-to-r from-red-500 to-[#B974F4] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-red-500/25 transform hover:scale-105 flex items-center justify-center space-x-2">
-                <span>Ver catálogo</span>
-                <ArrowForwardIcon className="group-hover:translate-x-1 transition-transform duration-300" />
-              </button>
-              </Link>
-              
-              <button className="group border-2 border-white/20 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:bg-white/10 hover:border-white/40 flex items-center justify-center space-x-2">
-                <LocalOfferIcon />
-                <span>Ver ofertas</span>
-              </button>
-            </div>
+ <div className="flex flex-col sm:flex-row gap-4 pt-4">
+  {/* Ver catálogo */}
+  <Link
+    to="/catalog"
+    className="group !no-underline !text-white bg-gradient-to-r from-red-500 to-[#B974F4] px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-red-500/25 transform hover:scale-105 flex items-center justify-center space-x-2"
+  >
+    <span>Ver catálogo</span>
+    <ArrowForwardIcon className="group-hover:translate-x-1 transition-transform duration-300" />
+  </Link>
+
+  {/* Ver ofertas */}
+  <Link
+    to="/offers"
+    className="group !no-underline !text-white border-2 border-white/20 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:bg-white/10 hover:border-white/40 flex items-center justify-center space-x-2"
+  >
+    <LocalOfferIcon />
+    <span>Ver ofertas</span>
+  </Link>
+</div>
 
             {/* Refactorización: Mapeo de un array para las estadísticas */}
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/10">

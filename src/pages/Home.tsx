@@ -1,6 +1,5 @@
 import React from 'react';
 import ProductCard from '../components/ProductCard';
-import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import BrandCarousel from '../components/BrandCarousel';
 import Banner from '../components/Banner';
@@ -12,7 +11,6 @@ import { phones } from '../data'; // <-- importar
 
 const Home: React.FC = () => (
   <div className="min-h-screen">
-    <Navbar />
     <HeroSection />
     <BrandCarousel />
     <Banner />

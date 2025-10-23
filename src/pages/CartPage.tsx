@@ -5,7 +5,6 @@ import Footer from '../components/Footer';
 const CartPage: React.FC = () => {
   return (
     <div className="min-h-screen">
-      <Navbar />
       <ShoppingCart />
       <Footer />
     </div>

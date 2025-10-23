@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { phones } from '../data';
-import Navbar from '../components/Navbar';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -37,8 +36,6 @@ const SearchResults: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { phones } from '../data';
@@ -44,8 +43,6 @@ const Offers: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <Navbar />
-
       {/* Hero intenso */}
       <header className="relative overflow-hidden py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center gap-8">
@@ -64,14 +61,24 @@ const Offers: React.FC = () => {
               Aprovecha los descuentos y novedades antes de que se terminen.
             </p>
 
-            <div className="flex items-center gap-4">
-              <Link to="/catalog" className="inline-flex items-center bg-black text-white px-5 py-3 rounded-xl font-semibold hover:scale-105 transform transition">
-                Ver todo el catálogo
-              </Link>
-              <Link to="/offers" className="inline-flex items-center text-gray-700 px-4 py-3 rounded-xl border border-gray-200 hover:shadow">
-                Categorías populares
-              </Link>
-            </div>
+           <div className="flex items-center gap-4">
+  {/* Ver todo el catálogo */}
+  <Link
+    to="/catalog"
+  className="hidden sm:inline-flex items-center bg-gradient-to-r from-red-500 to-[#B974F4] !text-white !no-underline px-4 py-2 rounded-lg font-semibold hover:scale-105 transform transition"
+  >
+    Ver todo el catálogo
+  </Link>
+
+  {/* Categorías populares */}
+  <Link
+    to="/offers"
+    className="inline-flex items-center !no-underline !text-gray-700 px-4 py-3 rounded-xl border border-gray-200 hover:shadow transition transform hover:scale-105"
+  >
+    Categorías populares
+  </Link>
+</div>
+
 
             <div className="mt-4 flex items-center space-x-4">
               <div className="flex items-center space-x-2">
