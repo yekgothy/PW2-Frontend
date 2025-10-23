@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { phones } from '../data';
+import Navbar from '../components/Navbar';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
