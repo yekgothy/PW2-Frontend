@@ -144,7 +144,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, image }) => 
       {/* Efecto de brillo en hover */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
 
-    </div> // <-- cierra div principal del card cambio por si acaso
+    </div> // <-- cierra div principal del card
   );
 };
 
