@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
-
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { phones } from '../data'; // Tus datos de productos
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
@@ -18,6 +18,8 @@ const ProductDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
+
       <div className="max-w-7xl mx-auto p-8 space-y-8">
         {/* Información principal */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row gap-8">

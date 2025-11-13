@@ -21,6 +21,8 @@ import Profile from './pages/Profile';
 // Ofertas (asegúrate que exista el archivo y el export por defecto)
 import Offers from './pages/Offers';
 
+import ProductDetail from "./pages/ProductDetail";
+
 const App: React.FC = () => {
   return (
     <>
@@ -44,6 +46,8 @@ const App: React.FC = () => {
 
         {/* Fallback: cualquier otra ruta te manda a Inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/product/:id" element={<ProductDetail />} /> {/* ruta dinámica */}
+
       </Routes>
     </>
   );
