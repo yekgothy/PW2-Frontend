@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
@@ -78,8 +77,6 @@ const UserProfile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
-
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="p-8">

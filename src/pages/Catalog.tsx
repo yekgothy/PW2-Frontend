@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { phones } from '../data';
@@ -28,8 +27,6 @@ const Catalog: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>

@@ -1,38 +1,52 @@
-import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+// src/App.tsx
+// Enrutador principal con Navbar y rutas públicas/protegidas.
+
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+
+import Navbar from './components/Navbar';
+import ProtectedRoute from './routes/ProtectedRoute';
+
+// Páginas reales del proyecto
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Catalog from './pages/Catalog';
 import CartPage from './pages/CartPage';
 import ContactPage from './pages/ContactPage';
-import { CartProvider } from './context/CartContext';
-import UserProfile from './pages/userProfile';
-import SearchResults from './pages/SearchResults';
-import Catalog from './pages/Catalog'; // <-- existing
-import Offers from './pages/Offers'; // <-- nueva importación
 
-import ProductDetail from "./pages/ProductDetail";
+// Auth / Perfil
+import LoginPage from './pages/Login';
+import RegisterPage from './pages/Register';
+import Profile from './pages/Profile';
 
+// Ofertas (asegúrate que exista el archivo y el export por defecto)
+import Offers from './pages/Offers';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <CartProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/search" element={<SearchResults />} />
-          <Route path="/catalog" element={<Catalog />} />
-          <Route path="/offers" element={<Offers />} /> {/* <-- nueva ruta */}
-          <Route path="/product/:id" element={<ProductDetail />} /> {/* ruta dinámica */}
-        </Routes>
-      </BrowserRouter>
-    </CartProvider>
+    <>
+      <Navbar />
+      <Routes>
+        {/* Públicas */}
+        <Route path="/" element={<Home />} />
+        <Route path="/catalog" element={<Catalog />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/offers" element={<Offers />} />  {/* ⬅️ AQUÍ LA RUTA QUE FALTABA */}
+
+        {/* Auth */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Protegidas */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+
+        {/* Fallback: cualquier otra ruta te manda a Inicio */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
-}
+};
 
 export default App;

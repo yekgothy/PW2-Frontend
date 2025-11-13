@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import {
   Phone,
@@ -48,7 +47,6 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
       
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-red-500 via-[#B974F4] to-purple-600 pt-24 pb-12">

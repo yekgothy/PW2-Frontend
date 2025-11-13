@@ -1,0 +1,15 @@
+{
+  "name": "celtel-api",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.1"
+  },
+  "devDependencies": { "nodemon": "^3.1.0" }
+}

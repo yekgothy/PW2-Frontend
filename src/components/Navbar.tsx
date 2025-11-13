@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
   const searchRef = useRef<HTMLDivElement | null>(null);
 
   // derive brands from data
-  const brands = Array.from(new Set(phones.map(p => p.name.split(' ')[0]))).filter(Boolean);
+  const brands = Array.from(new Set(phones.map(p => (p.name.split(' ')[0] || '').trim()))).filter(Boolean);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,6 +88,15 @@ const Navbar: React.FC = () => {
 
           {/* Lado Derecho: Íconos de Usuario, Carrito y Búsqueda */}
           <div className="flex flex-1 items-center justify-end space-x-4 pr-4 relative">
+            {/* Botón de registro añadido */}
+ <Link
+  to="/register"
+  className="hidden sm:inline-flex items-center bg-gradient-to-r from-red-500 to-[#B974F4] !text-white !no-underline px-4 py-2 rounded-lg font-semibold hover:scale-105 transform transition"
+>
+  Registrarme
+</Link>
+
+
             <Link to="/login" aria-label="User account" className="p-3 rounded-full transition-all duration-300 hover:bg-gradient-to-r hover:from-[#B974F4] hover:to-red-500 hover:text-white transform hover:scale-110 hover:shadow-lg">
               <PersonOutlineIcon fontSize="medium" sx={{ color: '#000000' }} />
             </Link>
@@ -175,15 +184,41 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Sección Inferior: Enlaces de Navegación */}
-        <div className="flex justify-center items-center space-x-10 py-4">
-          <Link to="/" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Inicio</Link>
-          <Link to="/catalog" className="text-sm font-semibold text-gray-700 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Celulares</Link>
-          <a href="#" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Accesorios</a>
-          <Link to="/offers" className="text-sm font-semibold text-red-500 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Ofertas</Link>
-          <a href="#" className="text-sm font-semibold text-gray-700 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Servicios</a>
-          <Link to="/contact" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Contacto</Link>
-          <Link to="/profile" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Perfil</Link>
-        </div>
+<div className="flex justify-center items-center space-x-10 py-4">
+  <Link
+    to="/"
+    className="text-sm font-semibold !text-gray-700 !no-underline hover:!text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2"
+  >
+    Inicio
+  </Link>
+  <Link
+    to="/catalog"
+    className="text-sm font-semibold !text-gray-700 !no-underline hover:!text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2"
+  >
+    Celulares
+  </Link>
+
+  <Link
+    to="/offers"
+    className="text-sm font-semibold !text-red-500 !no-underline hover:!text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2"
+  >
+    Ofertas
+  </Link>
+
+  <Link
+    to="/contact"
+    className="text-sm font-semibold !text-gray-700 !no-underline hover:!text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2"
+  >
+    Contacto
+  </Link>
+  <Link
+    to="/profile"
+    className="text-sm font-semibold !text-gray-700 !no-underline hover:!text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2"
+  >
+    Perfil
+  </Link>
+</div>
+
       </div>
     </header>
   );
