@@ -10,8 +10,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import LockIcon from '@mui/icons-material/Lock';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
-import QrCodeIcon from '@mui/icons-material/QrCode';
-import StoreIcon from '@mui/icons-material/Store';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,7 +37,6 @@ const CheckoutPage: React.FC = () => {
     phone: user.phone || '',
     notes: ''
   });
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'transfer' | 'store' | 'qr' | ''>('');
   const [cardData, setCardData] = useState({ holder: '', number: '', exp: '', cvv: '' });
   const [orderId, setOrderId] = useState<string>('');
   const [processing, setProcessing] = useState(false);
@@ -55,7 +52,7 @@ const CheckoutPage: React.FC = () => {
   const finalTotal = state.total + shippingCost;
 
   const canContinueShipping = shipping.fullName && shipping.address && shipping.city && shipping.postalCode;
-  const canContinuePayment = paymentMethod !== '' && (paymentMethod !== 'card' || (cardData.holder && cardData.number && cardData.exp && cardData.cvv));
+  const canContinuePayment = Boolean(cardData.holder && cardData.number && cardData.exp && cardData.cvv);
 
   const goBack = () => {
     if (step === 'shipping') navigate('/cart');
@@ -165,42 +162,57 @@ const CheckoutPage: React.FC = () => {
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2"><PaymentIcon className="text-[#B974F4]" /><span>Método de Pago</span></h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <button onClick={() => setPaymentMethod('card')} className={`p-4 rounded-xl border flex items-center space-x-3 transition ${paymentMethod==='card' ? 'border-[#B974F4] bg-[#B974F4]/5' : 'border-gray-200 hover:bg-gray-50'}`}>
-                    <CreditCardIcon className="text-[#B974F4]" /><span className="text-sm font-semibold">Tarjeta</span>
-                  </button>
-                  <button onClick={() => setPaymentMethod('transfer')} className={`p-4 rounded-xl border flex items-center space-x-3 transition ${paymentMethod==='transfer' ? 'border-[#B974F4] bg-[#B974F4]/5' : 'border-gray-200 hover:bg-gray-50'}`}>
-                    <PaymentIcon className="text-[#B974F4]" /><span className="text-sm font-semibold">Transferencia</span>
-                  </button>
-                  <button onClick={() => setPaymentMethod('store')} className={`p-4 rounded-xl border flex items-center space-x-3 transition ${paymentMethod==='store' ? 'border-[#B974F4] bg-[#B974F4]/5' : 'border-gray-200 hover:bg-gray-50'}`}>
-                    <StoreIcon className="text-[#B974F4]" /><span className="text-sm font-semibold">Pago en tienda</span>
-                  </button>
-                  <button onClick={() => setPaymentMethod('qr')} className={`p-4 rounded-xl border flex items-center space-x-3 transition ${paymentMethod==='qr' ? 'border-[#B974F4] bg-[#B974F4]/5' : 'border-gray-200 hover:bg-gray-50'}`}>
-                    <QrCodeIcon className="text-[#B974F4]" /><span className="text-sm font-semibold">QR / SPEI</span>
-                  </button>
-                </div>
-                {paymentMethod === 'card' && (
+                <div className="rounded-2xl border border-[#B974F4]/30 bg-[#B974F4]/5 p-4 sm:p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-inner">
+                      <CreditCardIcon className="text-[#B974F4]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">Tarjeta bancaria</p>
+                      <p className="text-xs text-gray-500">Aceptamos Visa, MasterCard y American Express.</p>
+                    </div>
+                  </div>
                   <div className="mt-6 space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Titular</label>
-                      <input value={cardData.holder} onChange={e => setCardData(d => ({ ...d, holder: e.target.value }))} className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#B974F4] outline-none" />
+                      <label className="mb-2 block text-sm font-medium text-gray-700">Titular</label>
+                      <input
+                        value={cardData.holder}
+                        onChange={e => setCardData(d => ({ ...d, holder: e.target.value }))}
+                        className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#B974F4]"
+                      />
                     </div>
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Número</label>
-                        <input value={cardData.number} onChange={e => setCardData(d => ({ ...d, number: e.target.value }))} maxLength={19} placeholder="XXXX XXXX XXXX XXXX" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#B974F4] outline-none" />
+                        <label className="mb-2 block text-sm font-medium text-gray-700">Número</label>
+                        <input
+                          value={cardData.number}
+                          onChange={e => setCardData(d => ({ ...d, number: e.target.value }))}
+                          maxLength={19}
+                          placeholder="XXXX XXXX XXXX XXXX"
+                          className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#B974F4]"
+                        />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Expiración</label>
-                        <input value={cardData.exp} onChange={e => setCardData(d => ({ ...d, exp: e.target.value }))} placeholder="MM/AA" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#B974F4] outline-none" />
+                        <label className="mb-2 block text-sm font-medium text-gray-700">Expiración</label>
+                        <input
+                          value={cardData.exp}
+                          onChange={e => setCardData(d => ({ ...d, exp: e.target.value }))}
+                          placeholder="MM/AA"
+                          className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#B974F4]"
+                        />
                       </div>
                     </div>
                     <div className="w-32">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
-                      <input value={cardData.cvv} onChange={e => setCardData(d => ({ ...d, cvv: e.target.value }))} maxLength={4} className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#B974F4] outline-none" />
+                      <label className="mb-2 block text-sm font-medium text-gray-700">CVV</label>
+                      <input
+                        value={cardData.cvv}
+                        onChange={e => setCardData(d => ({ ...d, cvv: e.target.value }))}
+                        maxLength={4}
+                        className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#B974F4]"
+                      />
                     </div>
                   </div>
-                )}
+                </div>
               </div>
               <div className="flex justify-end">
                 <button disabled={!canContinuePayment} onClick={() => setStep('review')} className="inline-flex items-center space-x-2 bg-gradient-to-r from-red-500 to-[#B974F4] text-white px-6 py-3 rounded-xl font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 transition">
@@ -251,7 +263,7 @@ const CheckoutPage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">Pago</h4>
-                    <p className="text-sm text-gray-600">{paymentMethod === 'card' ? `Tarjeta terminada en ${cardData.number.slice(-4)}` : paymentMethod === 'transfer' ? 'Transferencia Bancaria (instrucciones por correo)' : paymentMethod === 'store' ? 'Pago en tienda (reservado 24h)' : 'QR / SPEI (código generado)'}</p>
+                    <p className="text-sm text-gray-600">Tarjeta terminada en {cardData.number.slice(-4)}</p>
                   </div>
                   <div className="border-t border-gray-200 pt-4 flex justify-between font-bold text-gray-900">
                     <span>Total a pagar</span>
