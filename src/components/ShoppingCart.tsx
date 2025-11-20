@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { 
   Add, 
@@ -216,9 +217,12 @@ const ShoppingCart: React.FC = () => {
               
               {/* Botones de acción */}
               <div className="space-y-2">
-                <button className="w-full bg-gradient-to-r from-red-500 to-[#B974F4] text-white py-3 px-4 rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg">
+                <Link
+                  to="/checkout"
+                  className="block w-full bg-gradient-to-r from-red-500 to-[#B974F4] text-white py-3 px-4 rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg text-center"
+                >
                   Proceder al Pago
-                </button>
+                </Link>
                 
                 <button className="w-full bg-gray-100 text-gray-900 py-2 px-4 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 border border-gray-200">
                   Continuar Comprando

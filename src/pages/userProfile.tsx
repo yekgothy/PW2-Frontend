@@ -1,243 +1,119 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import PersonIcon from '@mui/icons-material/Person';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import SaveIcon from '@mui/icons-material/Save';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import UserProfileInfo from '../components/profile/UserProfileInfo';
+import RecentOrders from '../components/profile/RecentOrders';
+import Wishlist from '../components/profile/Wishlist';
+import ProfileEditForm from '../components/profile/ProfileEditForm';
+import EditIcon from '@mui/icons-material/Edit';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import CloseIcon from '@mui/icons-material/Close';
+import { UserProvider } from '../context/UserContext';
 
-interface ProfileData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  age?: number | '';
-  address?: string;
-  newsletter: boolean;
-}
-
-const STORAGE_KEY = 'connectel_user_profile';
-
-const defaultProfile: ProfileData = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  age: '',
-  address: '',
-  newsletter: false,
-};
-
+// Página de perfil mejorada con pestañas
 const UserProfile: React.FC = () => {
-  const [profile, setProfile] = useState<ProfileData>(defaultProfile);
-  const [saved, setSaved] = useState<boolean>(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        setProfile(JSON.parse(stored));
-      } catch {
-        // ignore parse errors
-      }
-    }
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setProfile(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : (name === 'age' ? (value === '' ? '' : Number(value)) : value)
-    }));
-  };
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    // validación mínima
-    if (!profile.firstName || !profile.lastName || !profile.email) {
-      alert('Por favor completa nombre, apellido y correo.');
-      return;
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
-    // Aquí queda listo para reemplazar por llamada a API
-  };
-
-  const handleReset = () => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      setProfile(JSON.parse(stored));
-    } else {
-      setProfile(defaultProfile);
-    }
-  };
+  const [activeTab, setActiveTab] = useState<'orders' | 'wishlist' | 'datos'>('orders');
+  const [editing, setEditing] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="p-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Mi Perfil</h1>
-                <p className="text-gray-600">Edita tus datos personales. Los cambios se guardarán localmente (simula backend).</p>
-              </div>
-              <div className="flex items-center space-x-3">
-                {saved && (
-                  <span className="text-sm text-green-600 font-medium">Guardado</span>
+    <UserProvider>
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Columna izquierda: resumen + edición */}
+            <div className="space-y-6 lg:col-span-1">
+              <UserProfileInfo />
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2">
+                    <AssignmentIndIcon className="text-[#B974F4]" />
+                    <span>Perfil</span>
+                  </h3>
+                  <button
+                    onClick={() => setEditing(e => !e)}
+                    className="inline-flex items-center space-x-1 text-sm px-3 py-2 rounded-lg bg-gradient-to-r from-red-500 to-[#B974F4] text-white hover:shadow-md transition"
+                  >
+                    {editing ? <CloseIcon fontSize="small" /> : <EditIcon fontSize="small" />}
+                    <span>{editing ? 'Cerrar' : 'Editar'}</span>
+                  </button>
+                </div>
+                {editing ? (
+                  <ProfileEditForm onClose={() => setEditing(false)} />
+                ) : (
+                  <p className="text-sm text-gray-600">Usa el botón "Editar" para actualizar tu información personal. Los cambios se guardan localmente y pueden integrarse con un backend futuro.</p>
                 )}
-                <button
-                  onClick={handleReset}
-                  className="inline-flex items-center space-x-2 bg-white/5 hover:bg-white/10 border border-gray-200 text-gray-700 px-3 py-2 rounded-lg transition"
-                  title="Restablecer"
-                >
-                  <RestartAltIcon fontSize="small" />
-                  <span className="hidden sm:inline">Restablecer</span>
-                </button>
+              </div>
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Datos Adicionales</h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>• Seguridad de cuenta (2FA) — próximamente.</li>
+                  <li>• Preferencias de comunicación.</li>
+                  <li>• Integración con facturación.</li>
+                </ul>
               </div>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-                  <div className="relative">
-                    <PersonIcon className="absolute left-3 top-3 text-gray-400" />
-                    <input
-                      name="firstName"
-                      value={profile.firstName}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#B974F4] transition"
-                      placeholder="Juan"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Apellido</label>
-                  <div className="relative">
-                    <PersonIcon className="absolute left-3 top-3 text-gray-400" />
-                    <input
-                      name="lastName"
-                      value={profile.lastName}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#B974F4] transition"
-                      placeholder="Pérez"
-                    />
-                  </div>
-                </div>
+            {/* Columna derecha: pestañas dinámicas */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={() => setActiveTab('orders')}
+                  className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border text-sm font-semibold transition ${activeTab === 'orders' ? 'bg-gradient-to-r from-red-500 to-[#B974F4] text-white border-transparent shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
+                >
+                  <ShoppingBagIcon fontSize="small" />
+                  <span>Órdenes</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('wishlist')}
+                  className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border text-sm font-semibold transition ${activeTab === 'wishlist' ? 'bg-gradient-to-r from-red-500 to-[#B974F4] text-white border-transparent shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
+                >
+                  <FavoriteBorderIcon fontSize="small" />
+                  <span>Wishlist</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('datos')}
+                  className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border text-sm font-semibold transition ${activeTab === 'datos' ? 'bg-gradient-to-r from-red-500 to-[#B974F4] text-white border-transparent shadow-md' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
+                >
+                  <AssignmentIndIcon fontSize="small" />
+                  <span>Información</span>
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
-                  <div className="relative">
-                    <EmailIcon className="absolute left-3 top-3 text-gray-400" />
-                    <input
-                      name="email"
-                      type="email"
-                      value={profile.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#B974F4] transition"
-                      placeholder="tu@email.com"
-                    />
+              {activeTab === 'orders' && <RecentOrders />}
+              {activeTab === 'wishlist' && <Wishlist />}
+              {activeTab === 'datos' && (
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">¿Qué puedo hacer aquí?</h3>
+                  <p className="text-sm text-gray-600 mb-4">Esta sección centraliza tu actividad en la tienda. Próximamente podrás ver historial completo, descargas de factura, devoluciones y más.</p>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                      <h4 className="text-sm font-semibold text-gray-800 mb-1">Órdenes</h4>
+                      <p className="text-xs text-gray-600">Resumen de tus compras y sus productos.</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                      <h4 className="text-sm font-semibold text-gray-800 mb-1">Wishlist</h4>
+                      <p className="text-xs text-gray-600">Guarda productos para comparar o comprar luego.</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                      <h4 className="text-sm font-semibold text-gray-800 mb-1">Perfil</h4>
+                      <p className="text-xs text-gray-600">Actualiza tus datos de contacto y preferencias.</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                      <h4 className="text-sm font-semibold text-gray-800 mb-1">Mejoras</h4>
+                      <p className="text-xs text-gray-600">Integraciones futuras: facturación, soporte y fidelidad.</p>
+                    </div>
                   </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-                  <div className="relative">
-                    <PhoneIcon className="absolute left-3 top-3 text-gray-400" />
-                    <input
-                      name="phone"
-                      type="tel"
-                      value={profile.phone}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#B974F4] transition"
-                      placeholder="+52 (81) 1234-5678"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Edad</label>
-                  <div className="relative">
-                    <CalendarTodayIcon className="absolute left-3 top-3 text-gray-400" />
-                    <input
-                      name="age"
-                      type="number"
-                      min={0}
-                      value={profile.age ?? ''}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#B974F4] transition"
-                      placeholder="30"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
-                  <div className="relative">
-                    <LocationOnIcon className="absolute left-3 top-3 text-gray-400" />
-                    <input
-                      name="address"
-                      value={profile.address}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#B974F4] transition"
-                      placeholder="Av. Constitución 2450, Monterrey"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-3">
-                  <input
-                    name="newsletter"
-                    type="checkbox"
-                    checked={profile.newsletter}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-[#B974F4] border-gray-300 rounded"
-                  />
-                  <span className="text-sm text-gray-700">Recibir newsletter y ofertas</span>
-                </label>
-
-                <div className="flex items-center space-x-3">
-                  <button
-                    type="submit"
-                    className="inline-flex items-center space-x-2 bg-gradient-to-r from-red-500 to-[#B974F4] text-white px-4 py-2 rounded-lg font-semibold hover:scale-105 transition"
-                  >
-                    <SaveIcon fontSize="small" />
-                    <span>Guardar</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleReset}
-                    className="inline-flex items-center space-x-2 border border-gray-200 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-                  >
-                    <RestartAltIcon fontSize="small" />
-                    <span>Cancelar</span>
-                  </button>
-                </div>
-              </div>
-            </form>
+              )}
+            </div>
           </div>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+        </main>
+        <Footer />
+      </div>
+    </UserProvider>
   );
 };
 

@@ -30,7 +30,7 @@ const Catalog: React.FC = () => {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Catálogo</h1>
@@ -46,9 +46,9 @@ const Catalog: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
           {/* Sidebar filtros */}
-          <aside className="lg:col-span-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+          <aside className="lg:col-span-1 bg-white rounded-2xl p-5  border border-gray-100 shadow-sm lg:sticky lg:top-40 self-start h-fit">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Filtros</h3>
 
             <div className="space-y-4">
@@ -102,7 +102,7 @@ const Catalog: React.FC = () => {
 
           {/* Grid de productos */}
           <section className="lg:col-span-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
               {results.map(p => (
                 <ProductCard key={p.id} id={p.id} name={p.name} price={p.price} image={p.image} />
               ))}
