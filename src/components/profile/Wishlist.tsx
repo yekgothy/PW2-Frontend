@@ -9,12 +9,12 @@ const Wishlist: React.FC = () => {
   const { user, addToWishlist, removeFromWishlist } = useUser();
   const [addId, setAddId] = useState<string>('');
 
-  const available = phones.filter(p => !user.wishlist.includes(p.id));
-  const wishlistPhones = phones.filter(p => user.wishlist.includes(p.id));
+  const available = phones.filter((p) => !user.wishlist.includes(String(p.id)));
+  const wishlistPhones = phones.filter((p) => user.wishlist.includes(String(p.id)));
 
   const handleAdd = () => {
     if (addId) {
-      addToWishlist(Number(addId));
+  addToWishlist(addId);
       setAddId('');
     }
   };
@@ -33,8 +33,8 @@ const Wishlist: React.FC = () => {
             className="text-sm px-2 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#B974F4]"
           >
             <option value="">Agregar producto...</option>
-            {available.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
+            {available.map((p) => (
+              <option key={p.id} value={String(p.id)}>{p.name}</option>
             ))}
           </select>
           <button
@@ -60,7 +60,7 @@ const Wishlist: React.FC = () => {
                 <p className="text-xs text-gray-500">${p.price.toLocaleString()}</p>
               </div>
               <button
-                onClick={() => removeFromWishlist(p.id)}
+                onClick={() => removeFromWishlist(String(p.id))}
                 className="p-2 rounded-lg hover:bg-white hover:shadow-md transition"
                 title="Eliminar"
               >

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Iconos de Material UI
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -10,6 +10,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LoginIcon from '@mui/icons-material/Login';
+import { useUser } from '../context/UserContext';
 
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +19,9 @@ const LoginForm: React.FC = () => {
     password: '',
     rememberMe: false
   });
+  const [formError, setFormError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { login, isLoading } = useUser();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -27,10 +31,21 @@ const LoginForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt:', formData);
-    // Aquí iría la lógica de autenticación
+    setFormError(null);
+
+    const result = await login({
+      email: formData.email,
+      password: formData.password
+    });
+
+    if (result.success) {
+      navigate('/');
+      return;
+    }
+
+    setFormError(result.message ?? 'No se pudo iniciar sesión.');
   };
 
   return (
@@ -63,6 +78,11 @@ const LoginForm: React.FC = () => {
 
           {/* Formulario */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {formError ? (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {formError}
+              </div>
+            ) : null}
             
             {/* Campo Email */}
             <div className="space-y-2">
@@ -141,10 +161,11 @@ const LoginForm: React.FC = () => {
             {/* Botón de inicio de sesión */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-red-500 to-[#B974F4] text-white font-semibold py-3 px-4 rounded-lg hover:shadow-xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-red-500 to-[#B974F4] text-white font-semibold py-3 px-4 rounded-lg hover:shadow-xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <LoginIcon fontSize="small" />
-              <span>Iniciar Sesión</span>
+              <span>{isLoading ? 'Validando...' : 'Iniciar Sesión'}</span>
             </button>
           </form>
 

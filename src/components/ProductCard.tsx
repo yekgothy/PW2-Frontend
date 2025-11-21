@@ -1,29 +1,45 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import StarIcon from '@mui/icons-material/Star';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { useCart } from '../context/CartContext';
-import { Link } from "react-router-dom";
+import { useUser } from '../context/UserContext';
+import { Link } from 'react-router-dom';
+import type { Product } from '../context/ProductContext';
 
 interface ProductCardProps {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
+  product: Product;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, image }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const { addItem } = useCart();
+  const { requireAuth } = useUser();
 
-  // Generar descuento y precio original aleatorio para demo
-  const discount = Math.floor(Math.random() * 30) + 10; // 10-40% descuento
-  const originalPrice = Math.floor(price * (1 + discount / 100));
-  const rating = (4.2 + Math.random() * 0.7).toFixed(1); // Rating entre 4.2-4.9
+  const { id, name, price, image, rating, reviews, onSale, brand } = product;
+
+  const { discountLabel, originalPrice, averageRating } = useMemo(() => {
+    const inferredOriginal = onSale ? Math.round(price * 1.15) : price;
+    const discountValue = Math.max(inferredOriginal - price, 0);
+    const label = onSale && discountValue > 0 ? `${Math.round((discountValue / inferredOriginal) * 100)}%` : null;
+    const fallbackRating = rating && rating > 0
+      ? rating
+      : 4.2 + ((Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0) % 7) / 10);
+
+    return {
+      discountLabel: label,
+      originalPrice: inferredOriginal,
+      averageRating: Number(fallbackRating.toFixed(1))
+    };
+  }, [id, onSale, price, rating]);
 
   const handleAddToCart = () => {
+    if (!requireAuth()) {
+      return;
+    }
+
     addItem({
       id,
       name,
@@ -37,12 +53,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, image }) => 
     <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
 
       {/* Badge de descuento */}
-      <div className="absolute top-4 left-4 z-10">
-        <div className="bg-gradient-to-r from-red-500 to-[#B974F4] text-white px-3 py-1 rounded-full text-sm font-bold flex items-center space-x-1">
-          <LocalOfferIcon fontSize="small" />
-          <span>-{discount}%</span>
+      {discountLabel && (
+        <div className="absolute top-4 left-4 z-10">
+          <div className="bg-gradient-to-r from-red-500 to-[#B974F4] text-white px-3 py-1 rounded-full text-sm font-bold flex items-center space-x-1">
+            <LocalOfferIcon fontSize="small" />
+            <span>-{discountLabel}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Botón de favorito */}
       <button
@@ -79,18 +97,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, image }) => 
             {[...Array(5)].map((_, i) => (
               <StarIcon
                 key={i}
-                className={`${i < Math.floor(parseFloat(rating)) ? 'text-yellow-400' : 'text-gray-300'}`}
+                className={`${i < Math.floor(averageRating) ? 'text-yellow-400' : 'text-gray-300'}`}
                 fontSize="small"
               />
             ))}
           </div>
-          <span className="text-sm text-gray-600">({rating})</span>
+          <span className="text-sm text-gray-600">({averageRating.toFixed(1)})</span>
+          {typeof reviews === 'number' && reviews > 0 && (
+            <span className="text-xs text-gray-400">{reviews} reseñas</span>
+          )}
         </div>
 
         {/* Nombre del producto */}
-        <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#B974F4] transition-colors duration-300 line-clamp-2">
-          {name}
-        </h3>
+        <div>
+          <p className="text-xs uppercase tracking-wide text-gray-400">{brand}</p>
+          <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#B974F4] transition-colors duración-300 line-clamp-2">
+            {name}
+          </h3>
+        </div>
 
         {/* Precios */}
         <div className="space-y-1">
@@ -98,23 +122,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, image }) => 
             <span className="text-2xl font-bold bg-gradient-to-r from-red-500 to-[#B974F4] bg-clip-text text-transparent">
               ${price.toLocaleString()}
             </span>
-            <span className="text-lg text-gray-500 line-through">
-              ${originalPrice.toLocaleString()}
-            </span>
+            {discountLabel && (
+              <span className="text-lg text-gray-500 line-through">
+                ${originalPrice.toLocaleString()}
+              </span>
+            )}
           </div>
-          <p className="text-sm text-green-600 font-semibold">
-            Ahorras ${(originalPrice - price).toLocaleString()}
-          </p>
+          {discountLabel && (
+            <p className="text-sm text-green-600 font-semibold">
+              Ahorras ${(originalPrice - price).toLocaleString()}
+            </p>
+          )}
         </div>
 
         {/* Características rápidas */}
         <div className="flex flex-wrap gap-2">
-          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">
-            Envío gratis
-          </span>
-          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
-            Garantía 1 año
-          </span>
+          {product.features.slice(0, 2).map((feature) => (
+            <span key={feature} className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full font-medium">
+              {feature}
+            </span>
+          ))}
         </div>
 
         {/* Botón de compra */}
@@ -129,7 +156,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, image }) => 
         {/* Opciones adicionales */}
         <div className="flex justify-between text-sm">
           <Link
-            to={`/product/${id.toString()}`}
+            to={`/product/${id}`}
             className="text-[#B974F4] hover:text-red-500 font-semibold transition-colors duration-300"
           >
             Ver detalles

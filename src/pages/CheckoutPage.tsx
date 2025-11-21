@@ -25,7 +25,7 @@ interface ShippingData {
 
 const CheckoutPage: React.FC = () => {
   const { state, clearCart } = useCart();
-  const { user, createOrderFromCart } = useUser();
+  const { user, createOrderFromCart, requireAuth, isAuthenticated, isLoading } = useUser();
   const navigate = useNavigate();
 
   const [step, setStep] = useState<'shipping' | 'payment' | 'review' | 'done'>('shipping');
@@ -48,6 +48,19 @@ const CheckoutPage: React.FC = () => {
     }
   }, [state.items.length, step, navigate]);
 
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      const allowed = requireAuth();
+      if (!allowed) {
+        navigate('/cart');
+      }
+    }
+  }, [isAuthenticated, isLoading, navigate, requireAuth]);
+
   const shippingCost = state.total > 1000 ? 0 : 99;
   const finalTotal = state.total + shippingCost;
 
@@ -61,10 +74,19 @@ const CheckoutPage: React.FC = () => {
   };
 
   const confirmOrder = () => {
+    if (!requireAuth()) {
+      return;
+    }
+
     setProcessing(true);
     setTimeout(() => {
       const newOrderId = createOrderFromCart(state.items, shippingCost);
-      clearCart();
+      if (!newOrderId) {
+        setProcessing(false);
+        return;
+      }
+
+      void clearCart();
       setOrderId(newOrderId);
       setProcessing(false);
       setStep('done');

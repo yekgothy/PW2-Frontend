@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import UserProfileInfo from '../components/profile/UserProfileInfo';
@@ -10,19 +10,42 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import CloseIcon from '@mui/icons-material/Close';
-import { UserProvider } from '../context/UserContext';
+import { useUser } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 // Página de perfil mejorada con pestañas
 const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'orders' | 'wishlist' | 'datos'>('orders');
   const [editing, setEditing] = useState(false);
+  const { isAuthenticated, isLoading, requireAuth } = useUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (!isAuthenticated) {
+      const allowed = requireAuth();
+      if (!allowed) navigate('/');
+    }
+  }, [isAuthenticated, isLoading, navigate, requireAuth]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <span className="text-gray-600">Cargando perfil...</span>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
-    <UserProvider>
-      <div className="min-h-screen bg-white">
-        <Navbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid lg:grid-cols-3 gap-8">
+    <div className="min-h-screen bg-white">
+      <Navbar />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid lg:grid-cols-3 gap-8">
             {/* Columna izquierda: resumen + edición */}
             <div className="space-y-6 lg:col-span-1">
               <UserProfileInfo />
@@ -109,11 +132,10 @@ const UserProfile: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    </UserProvider>
+        </div>
+      </main>
+      <Footer />
+    </div>
   );
 };
 

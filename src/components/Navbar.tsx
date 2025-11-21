@@ -5,11 +5,13 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchIcon from '@mui/icons-material/Search';
 import { useCart } from '../context/CartContext';
+import { useUser } from '../context/UserContext';
 import { phones } from '../data';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { state } = useCart();
+  const { isAuthenticated, user, logout } = useUser();
 
   // Search state
   const [searchOpen, setSearchOpen] = useState(false);
@@ -17,8 +19,10 @@ const Navbar: React.FC = () => {
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [brand, setBrand] = useState<string>('');
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement | null>(null);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
   // derive brands from data
   const brands = Array.from(new Set(phones.map(p => p.name.split(' ')[0]))).filter(Boolean);
@@ -52,6 +56,32 @@ const Navbar: React.FC = () => {
     };
   }, [searchOpen]);
 
+  useEffect(() => {
+    if (!profileMenuOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEsc);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [profileMenuOpen]);
+
   const submitSearch = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const params = new URLSearchParams();
@@ -61,6 +91,16 @@ const Navbar: React.FC = () => {
     if (brand) params.set('brand', brand);
     navigate(`/search?${params.toString()}`);
     setSearchOpen(false);
+  };
+
+  const handleProfileClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    setSearchOpen(false);
+    setProfileMenuOpen((prevOpen) => !prevOpen);
   };
 
   return (
@@ -88,9 +128,47 @@ const Navbar: React.FC = () => {
 
           {/* Lado Derecho: Íconos de Usuario, Carrito y Búsqueda */}
           <div className="flex flex-1 items-center justify-end space-x-4 pr-4 relative">
-            <Link to="/login" aria-label="User account" className="p-3 rounded-full transition-all duration-300 hover:bg-gradient-to-r hover:from-[#B974F4] hover:to-red-500 hover:text-white transform hover:scale-110 hover:shadow-lg">
-              <PersonOutlineIcon fontSize="medium" sx={{ color: '#000000' }} />
-            </Link>
+            <div className="relative" ref={profileMenuRef}>
+              <button
+                type="button"
+                aria-label="User account"
+                onClick={handleProfileClick}
+                className="p-3 rounded-full transition-all duration-300 hover:bg-gradient-to-r hover:from-[#B974F4] hover:to-red-500 hover:text-white transform hover:scale-110 hover:shadow-lg"
+              >
+                <PersonOutlineIcon fontSize="medium" sx={{ color: '#000000' }} />
+              </button>
+              {isAuthenticated && profileMenuOpen && (
+                <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 z-50">
+                  <div className="mb-4">
+                    <p className="text-sm font-semibold text-gray-900">{user.firstName || 'Sin nombre'} {user.lastName}</p>
+                    <p className="text-xs text-gray-500 truncate" title={user.email}>{user.email}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProfileMenuOpen(false);
+                        navigate('/profile');
+                      }}
+                      className="w-full text-left px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700"
+                    >
+                      Ir al perfil
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setProfileMenuOpen(false);
+                        await logout();
+                        navigate('/');
+                      }}
+                      className="w-full text-left px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-[#B974F4] text-white text-sm font-semibold hover:shadow-md"
+                    >
+                      Cerrar sesión
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             <Link to="/cart" aria-label="Shopping cart" className="relative p-3 rounded-full transition-all duration-300 hover:bg-gradient-to-r hover:from-red-500 hover:to-[#B974F4] hover:text-white transform hover:scale-110 hover:shadow-lg">
               <ShoppingCartIcon fontSize="medium" sx={{ color: '#000000' }} />
               {state.itemCount > 0 && (
@@ -180,7 +258,9 @@ const Navbar: React.FC = () => {
           <Link to="/catalog" className="text-sm font-semibold text-gray-700 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Celulares</Link>
           <Link to="/offers" className="text-sm font-semibold text-red-500 hover:text-[#B974F4] transition-colors duration-300 hover:scale-105 transform px-3 py-2">Ofertas</Link>
           <Link to="/contact" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Contacto</Link>
-          <Link to="/profile" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Perfil</Link>
+            {isAuthenticated && (
+              <Link to="/profile" className="text-sm font-semibold text-gray-700 hover:text-red-500 transition-colors duration-300 hover:scale-105 transform px-3 py-2">Perfil</Link>
+            )}
         </div>
       </div>
     </header>

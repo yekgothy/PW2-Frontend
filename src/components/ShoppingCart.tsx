@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { 
   Add, 
@@ -9,9 +9,12 @@ import {
   LocalShipping,
   Security
 } from '@mui/icons-material';
+import { useUser } from '../context/UserContext';
 
 const ShoppingCart: React.FC = () => {
-  const { state, updateQuantity, removeItem, clearCart } = useCart();
+  const { state, updateQuantity, removeItem, clearCart, isSyncing } = useCart();
+  const { requireAuth } = useUser();
+  const navigate = useNavigate();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-MX', {
@@ -20,10 +23,21 @@ const ShoppingCart: React.FC = () => {
     }).format(price);
   };
 
-  const handleQuantityChange = (id: number, newQuantity: number) => {
+  const handleQuantityChange = async (id: string, newQuantity: number) => {
+    if (!requireAuth()) return;
     if (newQuantity >= 1) {
-      updateQuantity(id, newQuantity);
+      await updateQuantity(id, newQuantity);
     }
+  };
+
+  const handleRemoveItem = async (id: string) => {
+    if (!requireAuth()) return;
+    await removeItem(id);
+  };
+
+  const handleClearCart = async () => {
+    if (!requireAuth()) return;
+    await clearCart();
   };
 
   const shippingCost = state.total > 1000 ? 0 : 99;
@@ -45,7 +59,10 @@ const ShoppingCart: React.FC = () => {
               <p className="text-gray-600 text-base mb-6">
                 Agrega algunos productos increíbles a tu carrito
               </p>
-              <button className="bg-gradient-to-r from-red-500 to-[#B974F4] text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg">
+              <button
+                onClick={() => navigate('/catalog')}
+                className="bg-gradient-to-r from-red-500 to-[#B974F4] text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg"
+              >
                 Continuar Comprando
               </button>
             </div>
@@ -95,18 +112,6 @@ const ShoppingCart: React.FC = () => {
                       {item.name}
                     </h3>
                     
-                    {item.color && (
-                      <p className="text-gray-600 text-xs mb-1">
-                        Color: {item.color}
-                      </p>
-                    )}
-                    
-                    {item.storage && (
-                      <p className="text-gray-600 text-xs mb-2">
-                        Almacenamiento: {item.storage}
-                      </p>
-                    )}
-                    
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       
                       {/* Precio */}
@@ -125,8 +130,9 @@ const ShoppingCart: React.FC = () => {
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2 bg-gray-100 rounded-xl px-3 py-2">
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                            className="p-1 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                            onClick={() => void handleQuantityChange(item.id, item.quantity - 1)}
+                            className="p-1 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                            disabled={isSyncing}
                           >
                             <Remove className="text-gray-700" fontSize="small" />
                           </button>
@@ -136,8 +142,9 @@ const ShoppingCart: React.FC = () => {
                           </span>
                           
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                            className="p-1 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                            onClick={() => void handleQuantityChange(item.id, item.quantity + 1)}
+                            className="p-1 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                            disabled={isSyncing}
                           >
                             <Add className="text-gray-700" fontSize="small" />
                           </button>
@@ -145,8 +152,9 @@ const ShoppingCart: React.FC = () => {
                         
                         {/* Botón eliminar */}
                         <button
-                          onClick={() => removeItem(item.id)}
-                          className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/20 rounded-xl transition-all duration-200"
+                          onClick={() => void handleRemoveItem(item.id)}
+                          className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/20 rounded-xl transition-all duration-200 disabled:opacity-50"
+                          disabled={isSyncing}
                         >
                           <Delete />
                         </button>
@@ -217,20 +225,29 @@ const ShoppingCart: React.FC = () => {
               
               {/* Botones de acción */}
               <div className="space-y-2">
-                <Link
-                  to="/checkout"
-                  className="block w-full bg-gradient-to-r from-red-500 to-[#B974F4] text-white py-3 px-4 rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg text-center"
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!requireAuth()) return;
+                    navigate('/checkout');
+                  }}
+                  className="w-full bg-gradient-to-r from-red-500 to-[#B974F4] text-white py-3 px-4 rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg text-center"
                 >
                   Proceder al Pago
-                </Link>
-                
-                <button className="w-full bg-gray-100 text-gray-900 py-2 px-4 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 border border-gray-200">
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate('/catalog')}
+                  className="w-full bg-gray-100 text-gray-900 py-2 px-4 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 border border-gray-200"
+                >
                   Continuar Comprando
                 </button>
                 
                 <button 
-                  onClick={clearCart}
-                  className="w-full text-red-600 py-2 px-4 rounded-xl font-medium hover:bg-red-50 transition-all duration-300"
+                  onClick={() => void handleClearCart()}
+                  className="w-full text-red-600 py-2 px-4 rounded-xl font-medium hover:bg-red-50 transition-all duration-300 disabled:opacity-50"
+                  disabled={isSyncing}
                 >
                   Vaciar Carrito
                 </button>

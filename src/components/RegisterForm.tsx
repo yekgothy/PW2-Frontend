@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Iconos de Material UI
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -12,6 +12,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LoginIcon from '@mui/icons-material/Login';
+import { useUser } from '../context/UserContext';
 
 const RegisterForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +27,9 @@ const RegisterForm: React.FC = () => {
     acceptTerms: false,
     newsletter: false
   });
+  const [formError, setFormError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { register, isLoading } = useUser();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -35,10 +39,30 @@ const RegisterForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Register attempt:', formData);
-    // Aquí iría la lógica de registro
+    setFormError(null);
+
+    if (formData.password !== formData.confirmPassword) {
+      setFormError('Las contraseñas no coinciden.');
+      return;
+    }
+
+    const result = await register({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+      newsletter: formData.newsletter
+    });
+
+    if (result.success) {
+      navigate('/');
+      return;
+    }
+
+    setFormError(result.message ?? 'No se pudo crear tu cuenta.');
   };
 
   return (
@@ -72,6 +96,11 @@ const RegisterForm: React.FC = () => {
 
           {/* Formulario */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {formError ? (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {formError}
+              </div>
+            ) : null}
             
             {/* Nombres en fila */}
             <div className="grid grid-cols-2 gap-6">
@@ -266,10 +295,11 @@ const RegisterForm: React.FC = () => {
             {/* Botón de registro */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-red-500 to-[#B974F4] text-white font-semibold py-3 px-4 rounded-lg hover:shadow-xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-red-500 to-[#B974F4] text-white font-semibold py-3 px-4 rounded-lg hover:shadow-xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <PersonAddIcon fontSize="small" />
-              <span>Crear Cuenta</span>
+              <span>{isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}</span>
             </button>
           </form>
 
